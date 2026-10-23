@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from . import models  # noqa: F401  (registra as tabelas no metadata)
 from .config import CORS_ORIGINS, SETORES
 from .database import Base, engine
-from .routers import cartoes, tipos, visitas
+from .routers import cartoes, dashboard, tipos, visitas
 from .services.regras import RegraViolada
 
 
@@ -45,3 +45,4 @@ def setores():
 app.include_router(tipos.router)
 app.include_router(cartoes.router)
 app.include_router(visitas.router)
+app.include_router(dashboard.router)

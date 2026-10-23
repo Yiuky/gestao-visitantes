@@ -148,7 +148,25 @@ Falhas visuais também corrigidas na S2: a célula de ações com `display:flex`
 Observação: as capturas de tela pelo MCP falharam várias vezes com `CDP sendCommand "Page.captureScreenshot" timed out`; as interações e leituras do DOM funcionaram. As imagens de evidência são geradas na S5 por script reproduzível.
 
 ## S3 — Painel
-_(pendente)_
+
+### S3 — Testes automatizados — 2026-10-23
+Comando: `pytest -q tests/test_dashboard.py` e suíte completa
+Saída: `11 passed in 1.83s` · `============================= 65 passed in 14.58s =============================`
+Resultado: PASSOU (T30–T39 + recuperação de cartão + data de referência injetável)
+
+### S3 — Painel pela tela (MCP Claude in Chrome) — 2026-10-23
+Banco recarregado com `seed.py`; API reiniciada com o router novo.
+
+| # | Ação na tela | Indicadores lidos no DOM (`data-indicador`) | Status |
+|---|---|---|---|
+| P01 | Abrir Painel (seed) | 4 visitas do dia · 1 presente · 1 encerrada · 1 veículo · 1 cartão pendente · 0 negados (= seção 8 do handoff); lista: Bruno Teste, Jurídico, V-002, Recepção | PASSOU |
+| P02 | Visitas › Entrada Caio + Saída Bruno sem devolução › Painel | 4 · 1 (Caio) · 2 · 0 · 2 · 0 | PASSOU (M05, M10) |
+| P03 | Registrar visita de hoje (Gabriel) › Painel | visitas do dia 4 → 5 | PASSOU |
+| P04 | Cancelar Gabriel + Excluir Diego › Painel | visitas do dia 5 → 3 | PASSOU |
+| P05 | API parada › botão Atualizar | "Erro 500 ao falar com a API" | FALHOU → F4 |
+| P05b | idem após correção | "API indisponível. Verifique se o backend está em execução." | PASSOU |
+| P06 | API reiniciada › Atualizar (M04) | sem alerta; 3 · 1 · 2 · 0 · 2 · 0; presente Caio Fictício | PASSOU |
+| P07 | Imprimir lista de evacuação (M11) | NÃO TESTADO pelo MCP (`window.print` abre diálogo que bloqueia a automação); verificado na S5 por `Page.printToPDF` | NÃO TESTADO |
 
 ## S4 — Catraca e rastreamento (extensão)
 _(pendente)_
@@ -164,6 +182,7 @@ _(pendente)_
 | F1 | S1 | `ImportError: DLL load failed while importing _sqlite3` ao rodar pytest | `python` do PATH é o do QGIS, sem DLL do SQLite | venv recriado com Python gerenciado pelo `uv` | suíte 54 passed após a troca |
 | F2 | S2 | Erro 409 da Entrada não aparecia para o usuário (alerta em `top=-102px`) | aviso fica no topo da página e a ação acontece no fim da tabela | `Aviso` faz `scrollIntoView` ao surgir | B05b (MCP) |
 | F3 | S2 | Bordas da tabela desalinhadas na coluna Ações | `td` com `display:flex` deixa de ser célula | botões num `div.acoes` dentro do `td` | inspeção visual B05b |
+| F4 | S3 | Com a API parada, tela mostrava "Erro 500 ao falar com a API" | proxy do Vite responde 500 sem JSON (o `fetch` não falha) | 5xx sem corpo JSON → "API indisponível…" | P05b (MCP) |
 
 ## Resumo final dos testes
 | Suíte | Passou | Falhou | Corrigido | Não testado |

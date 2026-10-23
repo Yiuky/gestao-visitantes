@@ -12,7 +12,7 @@
 | S0 | ✅ | Conferir estrutura e docs, verificar ferramentas, iniciar Git | Ferramentas verificadas; Git inicializado; 1º commit |
 | S1 | ✅ | API núcleo: tipos, cartões, visitas, entrada/saída/cancelar (RN01–RN20) | `pytest -q` verde; persistência após reinício |
 | S2 | ✅ | Frontend: Visitas, Tipos, Cartões, rodapé de privacidade | `npm run build` ok; CA1 e CA2 pela tela; 360 px ok |
-| S3 | ⬜ | Painel: 6 indicadores por COUNT, lista de presentes, impressão | Testes de indicadores verdes; CA3 (painel e pesquisa) |
+| S3 | ✅ | Painel: 6 indicadores por COUNT, lista de presentes, impressão | Testes de indicadores verdes; CA3 (painel e pesquisa) |
 | S4 | ⬜ | Extensão: catraca simulada, passagens, trajeto, último local (RN21–RN26) | Testes de catraca verdes; CA3 (rastreamento) |
 | S4b | ⬜ | Docker: imagens api/web, compose, testes no contêiner (ADR-015) | `docker compose` build/test/up ok; persistência por volume |
 | S5 | ⬜ | Homologação, README, capturas, reflexão, GitHub privado | Suíte verde; README completo; push autorizado |
@@ -38,9 +38,9 @@
 - [x] Testes de botões B01–B29 via MCP Claude in Chrome
 
 **S3**
-- [ ] `/api/dashboard` e `/api/presentes`
-- [ ] Página Painel com indicadores e lista de evacuação imprimível
-- [ ] Recarregar indicadores após cada operação
+- [x] `/api/dashboard` e `/api/presentes`
+- [x] Página Painel com indicadores e lista de evacuação imprimível
+- [x] Recarregar indicadores após cada operação (e a cada 30 s)
 
 **S4 (extensão)**
 - [ ] Modelos pontos_acesso (seed se vazio) e passagens (sem PUT/DELETE)

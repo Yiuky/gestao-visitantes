@@ -137,6 +137,27 @@ class VisitaIn(BaseModel):
         return self
 
 
+class Dashboard(BaseModel):
+    data_referencia: date
+    visitas_do_dia: int
+    presentes: int
+    encerradas_do_dia: int
+    veiculos_no_patio: int
+    cartoes_pendentes: int
+    acessos_negados_hoje: int
+
+
+class Presente(BaseModel):
+    visita_id: int
+    nome_exibido: str
+    setor_destino: str
+    cartao_codigo: str | None
+    placa: str | None
+    ultimo_local: str
+    ultimo_local_em: datetime | None
+    desde: datetime | None
+
+
 class EntradaIn(BaseModel):
     cartao_id: int
 

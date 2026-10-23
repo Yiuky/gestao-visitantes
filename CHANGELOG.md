@@ -4,6 +4,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). 
 
 ## [Não publicado]
 
+### S3 — Painel — 2026-10-23
+- Adicionado: `GET /api/dashboard` (6 indicadores por COUNT; negados = 0 até a S4, ADR-017) e `GET /api/presentes`.
+- Adicionado: página Painel com indicadores, "Quem está no prédio agora", botões Atualizar e Imprimir lista de evacuação (CSS de impressão).
+- Adicionado: 11 testes (T30–T39); suíte com 65 testes.
+- Corrigido (F4): API fora do ar aparecia como "Erro 500"; agora "API indisponível".
+
 ### S2 — Frontend núcleo — 2026-10-23
 - Adicionado: projeto React 18 + Vite 5 em `frontend/` com proxy `/api`.
 - Adicionado: abas Painel (provisório), Visitas, Tipos de visita e Cartões; formulário de visita adaptado ao tipo; filtros; ações conforme o status; modais próprios (sem `alert/confirm`).

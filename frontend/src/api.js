@@ -25,6 +25,7 @@ function mensagemDeErro(corpo, status) {
 }
 
 export async function api(caminho, { method = 'GET', body } = {}) {
+  const INDISPONIVEL = 'API indisponível. Verifique se o backend está em execução.'
   let resp
   try {
     resp = await fetch(`/api${caminho}`, {
@@ -33,10 +34,12 @@ export async function api(caminho, { method = 'GET', body } = {}) {
       body: body ? JSON.stringify(body) : undefined,
     })
   } catch {
-    throw new Error('API indisponível. Verifique se o backend está em execução.')
+    throw new Error(INDISPONIVEL)
   }
   if (resp.status === 204) return null
   const corpo = await resp.json().catch(() => null)
+  // Proxy do Vite (500) ou nginx (502/504) sem a API respondendo: corpo não é JSON.
+  if (resp.status >= 500 && !corpo) throw new Error(INDISPONIVEL)
   if (!resp.ok) {
     const erro = new Error(mensagemDeErro(corpo, resp.status))
     erro.status = resp.status

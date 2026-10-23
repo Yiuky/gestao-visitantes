@@ -137,6 +137,27 @@ td > .badge:first-child { margin-left: 0; }
   border-top: 1px solid var(--borda);
 }
 
+/* Painel */
+.cabecalho-painel { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.cabecalho-painel h1 { margin: 0; }
+.cabecalho-painel .acoes-form { margin: 0; }
+.indicadores { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.indicador { display: flex; flex-direction: column; gap: 2px; margin: 0; }
+.indicador .valor { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+.indicador .rotulo { color: var(--suave); font-size: .9rem; }
+.indicador.principal { border-left: 4px solid var(--primaria); }
+.so-imprimir { display: none; }
+
+/* Impressão: só a lista de evacuação (M11) */
+@media print {
+  .topo, .rodape, .nao-imprimir, .aviso, .cabecalho-painel { display: none !important; }
+  .so-imprimir { display: block; }
+  .conteudo { padding: 0; max-width: none; }
+  body, .app { background: #fff; }
+  .tabela { border: 1px solid #000; }
+  .tabela th, .tabela td { border-bottom: 1px solid #000; color: #000; }
+}
+
 /* RNF01: abaixo de 640 px as tabelas viram cartões */
 @media (max-width: 640px) {
   .conteudo { padding: 16px 12px 24px; }
