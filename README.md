@@ -68,8 +68,9 @@ Um **painel** mostra os indicadores do dia, calculados no banco.
 | Código | https://github.com/Yiuky/gestao-visitantes |
 
 > [!WARNING]
-> **Demonstração pública sem login** (ADR-001): qualquer pessoa com o link pode cadastrar e alterar registros.
-> Use apenas dados fictícios. O plano gratuito do Render hiberna, então a primeira requisição pode levar cerca de 50 s.
+> **Ambiente de demonstração, sem autenticação** (ADR-001). **Não insira dados reais**: nomes, documentos, placas ou
+> qualquer informação pessoal. Os registros são fictícios e podem ser apagados ou reiniciados a qualquer momento.
+> No plano gratuito do Render, a primeira requisição depois de um período sem uso pode levar cerca de 50 s.
 
 ## 🖼️ Veja em ação
 
@@ -179,10 +180,9 @@ npm run dev                       # http://localhost:5173 (proxy /api → :8000)
 ```
 
 > [!NOTE]
-> Se o `pytest` acusar `DLL load failed while importing _sqlite3`, o `python` do PATH pode ser o de outro programa
-> (aqui era o do QGIS). Crie o venv com outro interpretador, por exemplo
-> `uv venv --managed-python --python 3.12 .venv` e `uv pip install -r requirements.txt` (falha F1 em
-> [docs/EXECUCAO.md](docs/EXECUCAO.md)).
+> Se o `pytest` acusar `DLL load failed while importing _sqlite3`, o `python` do PATH pode ser o embutido em outro
+> programa, sem o SQLite. Crie o venv com outro interpretador, por exemplo
+> `uv venv --managed-python --python 3.12 .venv` e `uv pip install -r requirements.txt`.
 
 ### Online (Supabase + Render + Vercel)
 
@@ -226,7 +226,7 @@ node scripts/capturas.mjs                          # E2E + capturas (stack no ar
 
 | # | Falha | Correção |
 |---|---|---|
-| F1 | `pytest` com `DLL load failed while importing _sqlite3` (Python do QGIS no PATH) | venv com Python gerenciado pelo `uv` |
+| F1 | `pytest` com `DLL load failed while importing _sqlite3` (Python embutido de outro programa no PATH) | venv com Python gerenciado pelo `uv` |
 | F2 | Erro 409 de uma ação na tabela aparecia fora da tela | o aviso rola até ficar visível |
 | F3 | Bordas da tabela desalinhadas na coluna Ações | botões num `div` dentro da célula |
 | F4 | Com a API parada, a tela dizia "Erro 500" | mensagem "API indisponível" |
@@ -255,6 +255,7 @@ Mapa completo critério → teste → evidência: [docs/EVIDENCIAS.md](docs/EVID
 - **Sem login nem perfis** (ADR-001) e sem trilha de auditoria de edições: não use com dados reais.
 - A catraca é simulada; o contrato `POST /api/catraca/passagens` é o que um leitor real chamaria (ADR-012).
 - Não há anonimização automática ao fim de `prazo_retencao_dias`.
+- A demo online é pública e sem autenticação; os dados podem ser alterados por qualquer visitante e reiniciados.
 - O plano gratuito do Render hiberna (cerca de 50 s na primeira requisição).
 - Horários são gravados em hora local de America/Cuiaba (ADR-016); uma operação em vários fusos exigiria UTC.
 - Itens de produção (login, HTTPS próprio, backup, anonimização) seguem no Épico A do [backlog](docs/BACKLOG.md).
@@ -273,10 +274,19 @@ Mapa completo critério → teste → evidência: [docs/EVIDENCIAS.md](docs/EVID
 | [docs/LGPD.md](docs/LGPD.md) | Base legal, inventário de dados, segurança |
 | [CHANGELOG.md](CHANGELOG.md) | Mudanças por sprint ([Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)) |
 
+## 🛡️ Segurança
+
+- O repositório não contém senhas, tokens, `.env` nem bancos de dados: a `DATABASE_URL` de produção existe só
+  como variável de ambiente no Render.
+- No Supabase, a API REST automática está desligada e todas as tabelas têm RLS; um teste automatizado confere que
+  o papel público não lê nem grava nada.
+- Encontrou uma falha de segurança? Abra uma [issue](https://github.com/Yiuky/gestao-visitantes/issues/new) **sem**
+  incluir dados pessoais, credenciais ou detalhes que permitam explorá-la; o contato segue por lá.
+
 ## 🌐 English Abstract
 
 **Gestão de visitantes** (*Visitor Management*) is an MVP for the front desk of a **fictitious** Brazilian public
-agency, built for a Claude Code training challenge (SEMA/MT).
+agency, built for a Claude Code training challenge (SEMA/MT). It is not an official system of any institution.
 - **Visits:** registered according to configurable **visit types** (required ID, vehicle allowed, allowed sectors).
 - **Access cards:** handed out at check-in, and the system tracks whether each card came back at check-out.
 - **Simulated turnstile:** card reads are stored as immutable, allow-or-deny **passages** with a reason. They build each
