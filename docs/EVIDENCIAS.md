@@ -13,7 +13,7 @@
 | CRUD e indicadores reais (2,0) | CRUD de visitas, tipos e cartões; 6 indicadores por `COUNT` que mudam a cada operação | `tests/test_*`, T30–T39, P02–P04, E07 | ✅ |
 | Testes e correções demonstráveis (1,0) | 79 testes pytest; 5 falhas reais encontradas e corrigidas (F1–F5) | `docs/EXECUCAO.md` → "Falhas identificadas e corrigidas" | ✅ |
 | GitHub e histórico de commits (1,0) | um commit por sprint com mensagem descritiva; push autorizado | https://github.com/Yiuky/gestao-visitantes (público, 8+ commits) | ✅ |
-| Reflexão obrigatória (README) | decisão técnica + sugestão do Claude Code revisada | `README.md` → "Reflexão" (rascunho para o participante revisar) | ✅ |
+| Reflexão obrigatória (README) | decisão técnica + sugestão do Claude Code revisada | removida do repositório público a pedido do autor (ADR-021); a ser entregue à parte | ⬜ fora do repositório |
 
 ## 2. Requisitos mínimos compartilhados
 

@@ -279,7 +279,7 @@ branch 'main' set up to track 'origin/main'.
 Verificação:
 ```
 https://github.com/Yiuky/gestao-visitantes · PUBLIC · branch main
-commits remotos: 8 · último: 0afdd93 docs: homologação, capturas, README e mapa de evidências
+commits remotos: 8 · último: 5f751b7 docs: homologação, capturas, README e mapa de evidências   (hash atualizado após a reescrita do histórico; era 0afdd93, ver S7)
 origin	https://github.com/Yiuky/gestao-visitantes.git (sem token na URL)
 ```
 Resultado: PASSOU
@@ -363,6 +363,36 @@ E07 → {"visitas_do_dia":"6","presentes":"2","encerradas_do_dia":"2","veiculos_
 ```
 Capturas de produção em `docs/img/online/`. O roteiro deixa na demo a visita fictícia "Helena Exemplo" e duas passagens.
 Resultado: PASSOU
+
+## S7 — Repositório público: limpeza do histórico e README final (ADR-021)
+
+### S7 — Reescrita do histórico — 2026-10-23
+Pedido do usuário: remover do histórico público a seção de Reflexão e as referências a nomes de variáveis de
+ambiente da máquina local e à organização no Supabase (nenhum valor de segredo jamais foi versionado).
+Backup antes: `git bundle create gestao-visitantes-antes-da-reescrita.bundle --all` (fora do repositório; `git bundle verify` ok).
+Comando: `git filter-repo --force --replace-text substituicoes.txt` (3 trocas literais + 1 regex que remove a seção `## … Reflexão` do README em todas as versões)
+Saída: `Parsed 12 commits … New history written in 0.63 seconds … Completely finished after 1.57 seconds.`
+Verificação: `git log --all -p | grep -c -E "GITHUB_KEY|GEMINI_API_KEY|Aula_06"` → `0`; `git log --all -p | grep -c -E "^\+## .*Reflex"` → `0`.
+
+Correspondência de hashes (antigo → novo):
+
+| Commit | Antigo | Novo |
+|---|---|---|
+| chore: estrutura inicial e documentação | 37adef0 | 49ebc6c |
+| feat(api): tipos de visita, cartões e ciclo de visitas | 942a079 | db7454a |
+| docs: corrige caminhos no log da S1 | a1a33e9 | df0ae30 |
+| feat(web): telas de visitas, tipos e cartões | e6ca821 | 55d7162 |
+| feat: painel com indicadores e lista de presentes | c43be2e | fa40724 |
+| feat: catraca simulada e rastreamento por pontos de passagem | 809d51f | f2dd7a8 |
+| chore(docker): imagens da API e da web, compose e testes em contêiner | 44e972d | 90b67c7 |
+| docs: homologação, capturas, README e mapa de evidências | 0afdd93 | 5f751b7 |
+| docs: registra publicação no GitHub | f6b0f26 | b35c1d2 |
+| feat(deploy): suporte a PostgreSQL/Supabase, RLS e configs de Render e Vercel | af17bb8 | edee24d |
+| feat(deploy): publicação na Vercel/Render/Supabase e README no padrão do autor | c305d0f | f6eaf4d |
+| docs: README e log revisados para repositório público | 8f439dc | 66c05e5 |
+
+Referências a hashes nos documentos atualizadas (só havia uma, na publicação da S5). O deploy em produção do
+Render continua o mesmo (imagem já construída); o painel do Render ainda mostra o hash antigo `af17bb8` daquele deploy.
 
 ## Falhas identificadas e corrigidas
 > Exigido na ficha de entrega: pelo menos uma falha real.

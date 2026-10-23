@@ -145,6 +145,11 @@ SELECT COUNT(*) FROM passagens WHERE resultado = 'NEGADO' AND date(ocorrido_em) 
   - **RLS ligado em todas as tabelas** no PostgreSQL (`criar_tabelas`): a API REST automática do Supabase (chave `anon`, pública por definição) não lê nem grava nada; a API do sistema conecta como dona das tabelas.
 - **Consequências:** a suíte roda também em PostgreSQL (`TEST_DATABASE_URL`, 84 testes). O sistema **continua sem login** (ADR-001): online, qualquer pessoa com a URL pode registrar e alterar dados — aceitável só como **demonstração com dados fictícios**; dado real exige o Épico A. O plano gratuito do Render hiberna após inatividade (primeira requisição lenta).
 
+### ADR-021 — Reescrita do histórico público e remoção da Reflexão (S7, decisão do usuário)
+- **Contexto:** com o repositório público, o usuário pediu para retirar do histórico a seção de Reflexão do README e referências a nomes de variáveis de ambiente locais e à organização no Supabase. Nenhum segredo (valor) foi versionado.
+- **Decisão:** `git filter-repo --replace-text` em todos os commits, com backup em *bundle* antes; *force push* para `main`; referências a hashes nos documentos atualizadas e tabela antigo → novo em `docs/EXECUCAO.md` (S7). A Reflexão deixa de constar no README.
+- **Consequências:** todos os hashes mudaram; clones antigos precisam ser refeitos (`git fetch` + `git reset --hard origin/main`). O GitHub pode manter commits antigos acessíveis pelo hash direto até a coleta de lixo do servidor; a remoção definitiva desses objetos exige pedido ao suporte do GitHub. O critério "Reflexão obrigatória" do desafio passa a ser entregue fora do repositório.
+
 ### ADR-019 — Roteiro E2E com capturas (S5)
 - **Contexto:** as capturas pelo MCP Claude in Chrome falhavam por timeout do CDP, mas as evidências precisam ser reproduzíveis.
 - **Decisão:** `scripts/capturas.mjs` (Node 22+, sem dependências) dirige o Chrome headless via CDP, clica nos botões reais, confere os resultados (E01–E09) e grava `docs/img/`.

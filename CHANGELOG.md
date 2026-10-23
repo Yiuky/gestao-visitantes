@@ -4,6 +4,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). 
 
 ## [Não publicado]
 
+### S7 — Repositório público — 2026-10-23
+- Alterado: README final no padrão dos projetos do autor (endereço da Vercel em destaque, capturas de produção, Requisitos, Perguntas frequentes, Contribuindo, Como citar, Autor e licença).
+- Removido: seção de Reflexão do README, inclusive do histórico (ADR-021).
+- Alterado: histórico reescrito com `git filter-repo`; todos os hashes de commit mudaram (tabela antigo → novo em `docs/EXECUCAO.md`, S7).
+
 ### S6 — Publicação online — 2026-10-23
 - Publicado: **https://gestao-visitantes.vercel.app** (Vercel) → API no Render → PostgreSQL no Supabase.
 - Adicionado: `scripts/seed_api.mjs` (seed fictício pelos endpoints públicos) e `docs/img/online/` (capturas de produção).
