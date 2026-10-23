@@ -4,6 +4,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). 
 
 ## [Não publicado]
 
+### S2 — Frontend núcleo — 2026-10-23
+- Adicionado: projeto React 18 + Vite 5 em `frontend/` com proxy `/api`.
+- Adicionado: abas Painel (provisório), Visitas, Tipos de visita e Cartões; formulário de visita adaptado ao tipo; filtros; ações conforme o status; modais próprios (sem `alert/confirm`).
+- Adicionado: rodapé de privacidade; tabelas viram cartões abaixo de 640 px.
+- Corrigido (F2): mensagem de erro de ação na tabela ficava fora da tela; agora rola até o aviso.
+- Corrigido (F3): bordas da coluna Ações desalinhadas.
+
 ### S1 — API núcleo — 2026-10-23
 - Adicionado: modelos `tipos_visita`, `cartoes_acesso`, `visitas`; relógio injetável (`app/relogio.py`).
 - Adicionado: endpoints de tipos, cartões, visitas (CRUD, pesquisa, entrada, saída, cancelar), `/api/health`, `/api/setores`.

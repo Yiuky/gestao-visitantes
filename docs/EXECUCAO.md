@@ -92,7 +92,60 @@ Saída: `Seed carregado: 5 tipos, 10 cartões, 5 visitas (dados fictícios).` ·
 Resultado: PASSOU (idempotente)
 
 ## S2 — Frontend núcleo
-_(pendente)_
+
+### S2 — Instalação e build — 2026-10-23
+Comando: `cd frontend; npm install --no-audit --no-fund; npm run build`
+Saída:
+```
+added 62 packages in 18s
+vite v5.4.11 building for production...
+✓ 37 modules transformed.
+dist/index.html                   0.50 kB │ gzip:  0.32 kB
+dist/assets/index-G19SUIPB.css    5.56 kB │ gzip:  1.81 kB
+dist/assets/index-dzSQlDK6.js   168.06 kB │ gzip: 52.72 kB
+✓ built in 862ms
+```
+Resultado: PASSOU
+Observação: o npm 11 avisa `allow-scripts` para o postinstall do esbuild; o build funciona sem ele (binário vem da dependência opcional).
+
+### S2 — Testes de botões no navegador real (MCP Claude in Chrome) — 2026-10-23
+Ambiente: uvicorn :8000 com o seed + `npm run dev` :5173; Chrome 1912 px de largura. Cada clique foi feito pelo MCP (`computer.left_click`, `form_input`) e o efeito conferido na tela (screenshot, `get_page_text` ou leitura do DOM).
+
+| # | Tela · botão | Ação | Resultado observado | Status |
+|---|---|---|---|---|
+| B01 | Abas | Painel / Visitas / Tipos / Cartões | troca de aba; seed listado (5 visitas, 5 tipos, 10 cartões) | PASSOU |
+| B02 | Visitas · Registrar (M02) | Reunião técnica sem documento | bloqueado pelo navegador: "Preencha este campo" no Documento* | PASSOU |
+| B03 | Visitas · Registrar | placa `AB12345` | alerta vermelho: "Placa: placa inválida; use o formato AAA9999 ou AAA9A99" (422 da API) | PASSOU |
+| B04 | Visitas · Registrar | placa `tst-1a01` | "Visita registrada como AGENDADA."; placa normalizada `TST1A01` | PASSOU |
+| B05 | Visitas · Entrada → Confirmar | Fernanda (placa já no pátio) | 409 "veículo TST1A01 já está no pátio" — **mensagem fora da tela** | FALHOU → F2 |
+| B05b | idem, após correção | mesma ação | alerta rolado para a área visível | PASSOU |
+| B06 | Visitas · Saída → Não devolvido | Bruno | "Saída registrada; cartão marcado como EXTRAVIADO."; linha ENCERRADA, V-002 "NÃO DEVOLVIDO"; sem botão Excluir (M07, M10) | PASSOU |
+| B07 | Visitas · Entrada → Confirmar | Fernanda após saída do Bruno | PRESENTE com V-001; modal lista só cartões DISPONÍVEIS (M05/M06) | PASSOU |
+| B08 | Visitas · Cancelar → Cancelar visita | Diego | CANCELADA; só resta Excluir | PASSOU |
+| B09 | Visitas · Excluir → Excluir | Diego (cancelada) | "Visita excluída." | PASSOU |
+| B10 | Visitas · Editar → Salvar | Caio 10:15 → 10:30 | form preenchido com detalhe; "Visita atualizada."; lista mostra 10:30 | PASSOU |
+| B11 | Visitas · filtros | nome "carla" | só "Caio Fictício" (busca no civil, exibe o social) | PASSOU |
+| B12 | Visitas · filtros | "carla" + PRESENTE | estado vazio "Nenhuma visita encontrada." | PASSOU |
+| B13 | Visitas · Limpar filtros | — | 5 linhas; campo nome vazio | PASSOU |
+| B14 | Visitas · Saída → Voltar | Fernanda | modal fecha sem alterar | PASSOU |
+| B15 | Visitas · Saída → Sim, devolvido | Fernanda | "Saída registrada; cartão devolvido."; ENCERRADA | PASSOU |
+| B16 | Tipos · Cadastrar (M01) | "Visita institucional", doc obrigatório, Diretoria | "Tipo de visita cadastrado."; linha ATIVO | PASSOU |
+| B17 | Tipos · Desativar / Ativar | Visita institucional | INATIVO → ATIVO, mensagens corretas | PASSOU |
+| B18 | Tipos · Excluir (com visitas) | Atendimento ao público | 409 "tipo de visita possui visitas vinculadas; desative-o em vez de excluir" | PASSOU |
+| B19 | Tipos · Editar → Salvar | renomear para "Visita institucional externa" | nome atualizado | PASSOU |
+| B20 | Tipos · Excluir (sem visitas) | Visita institucional externa | "Tipo ... excluído." | PASSOU |
+| B21 | Cartões · Marcar como recuperado | V-002 | "Cartão V-002 marcado como recuperado." | PASSOU |
+| B22 | Cartões · Inativar / Reativar | V-010 | INATIVO (botão vira Reativar) → DISPONÍVEL | PASSOU |
+| B23 | Cartões · Excluir (com histórico) | V-009 | 409 "cartão com histórico de visitas não pode ser excluído; inative-o" | PASSOU |
+| B24 | Cartões · Cadastrar | V-011 / RFID-TESTE-0011 | "Cartão cadastrado." | PASSOU |
+| B25 | Cartões · Editar → Salvar | V-011 cor azul | "Cartão atualizado." | PASSOU |
+| B26 | Cartões · filtro status | EXTRAVIADO | só V-009 | PASSOU |
+| B27 | Cartões · Excluir (sem histórico) | V-011 | "Cartão V-011 excluído." | PASSOU |
+| B28 | Cartões · EM USO | V-001 em uso | nenhuma ação, texto "Em uso por uma visita" | PASSOU |
+| B29 | 360 px (M12) | iframe de 360 px (a janela maximizada não redimensiona) | `innerWidth=358 scrollWidth=343`, `thead display=none`, `tr display=block` (cartões) | PASSOU |
+
+Falhas visuais também corrigidas na S2: a célula de ações com `display:flex` desalinhava as bordas da tabela (botões agora num `div` interno); filtro único de Cartões ocupava a largura toda (`max-width`).
+Observação: as capturas de tela pelo MCP falharam várias vezes com `CDP sendCommand "Page.captureScreenshot" timed out`; as interações e leituras do DOM funcionaram. As imagens de evidência são geradas na S5 por script reproduzível.
 
 ## S3 — Painel
 _(pendente)_
@@ -109,6 +162,8 @@ _(pendente)_
 | # | Sprint | Falha | Causa | Correção | Teste que comprova |
 |---|---|---|---|---|---|
 | F1 | S1 | `ImportError: DLL load failed while importing _sqlite3` ao rodar pytest | `python` do PATH é o do QGIS, sem DLL do SQLite | venv recriado com Python gerenciado pelo `uv` | suíte 54 passed após a troca |
+| F2 | S2 | Erro 409 da Entrada não aparecia para o usuário (alerta em `top=-102px`) | aviso fica no topo da página e a ação acontece no fim da tabela | `Aviso` faz `scrollIntoView` ao surgir | B05b (MCP) |
+| F3 | S2 | Bordas da tabela desalinhadas na coluna Ações | `td` com `display:flex` deixa de ser célula | botões num `div.acoes` dentro do `td` | inspeção visual B05b |
 
 ## Resumo final dos testes
 | Suíte | Passou | Falhou | Corrigido | Não testado |

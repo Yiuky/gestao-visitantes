@@ -11,7 +11,7 @@
 | M0 | ✅ | Documentação de requisitos, arquitetura e plano | Kit de documentos na pasta |
 | S0 | ✅ | Conferir estrutura e docs, verificar ferramentas, iniciar Git | Ferramentas verificadas; Git inicializado; 1º commit |
 | S1 | ✅ | API núcleo: tipos, cartões, visitas, entrada/saída/cancelar (RN01–RN20) | `pytest -q` verde; persistência após reinício |
-| S2 | ⬜ | Frontend: Visitas, Tipos, Cartões, rodapé de privacidade | `npm run build` ok; CA1 e CA2 pela tela; 360 px ok |
+| S2 | ✅ | Frontend: Visitas, Tipos, Cartões, rodapé de privacidade | `npm run build` ok; CA1 e CA2 pela tela; 360 px ok |
 | S3 | ⬜ | Painel: 6 indicadores por COUNT, lista de presentes, impressão | Testes de indicadores verdes; CA3 (painel e pesquisa) |
 | S4 | ⬜ | Extensão: catraca simulada, passagens, trajeto, último local (RN21–RN26) | Testes de catraca verdes; CA3 (rastreamento) |
 | S4b | ⬜ | Docker: imagens api/web, compose, testes no contêiner (ADR-015) | `docker compose` build/test/up ok; persistência por volume |
@@ -30,11 +30,12 @@
 - [x] `backend/seed.py`
 
 **S2**
-- [ ] Projeto Vite com proxy `/api`
-- [ ] Abas: Painel (provisório), Visitas, Tipos, Cartões
-- [ ] Formulário adaptado ao tipo; ações conforme status
-- [ ] Mensagens de erro da API e estado de lista vazia
-- [ ] Rodapé de privacidade; layout em cartões abaixo de 640 px
+- [x] Projeto Vite com proxy `/api`
+- [x] Abas: Painel (provisório), Visitas, Tipos, Cartões
+- [x] Formulário adaptado ao tipo; ações conforme status
+- [x] Mensagens de erro da API e estado de lista vazia
+- [x] Rodapé de privacidade; layout em cartões abaixo de 640 px
+- [x] Testes de botões B01–B29 via MCP Claude in Chrome
 
 **S3**
 - [ ] `/api/dashboard` e `/api/presentes`
