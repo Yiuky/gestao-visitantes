@@ -285,6 +285,50 @@ origin	https://github.com/Yiuky/gestao-visitantes.git (sem token na URL)
 Resultado: PASSOU
 **URL:** https://github.com/Yiuky/gestao-visitantes
 
+## S6 — Deploy online (Supabase + Render + Vercel, ADR-020)
+
+### S6 — Credenciais disponíveis — 2026-10-23
+Verificação dos nomes de variáveis de ambiente (valores não exibidos) e CLIs:
+```
+(só variáveis de outros serviços; nenhuma de Vercel, Render ou Supabase — nomes omitidos)
+vercel: não instalado · render: não instalado · supabase: não instalado
+```
+Resultado: deploy bloqueado até o usuário fornecer as credenciais; preparação feita e testada localmente.
+
+### S6 — Suíte em PostgreSQL 16 (contêiner descartável) — 2026-10-23
+Comando: `docker run -d --name gv-pg-teste ... postgres:16-alpine` + `TEST_DATABASE_URL=postgres://postgres:***@127.0.0.1:55432/visitantes pytest`
+Primeira execução do novo teste de RLS:
+```
+FAILED tests/test_infra.py::test_rls_bloqueia_papel_anon_no_postgres
+E   Actual message: "(psycopg.errors.InsufficientPrivilege) permission denied for sequence pontos_acesso_id_seq"
+1 failed, 83 passed in 44.22s
+```
+Causa: falha **do teste** — o papel simulado não tinha permissão na sequência (o Supabase concede ao `anon`), então o INSERT parava antes do RLS. Corrigido concedendo `USAGE` nas sequências.
+```
+=== PostgreSQL   84 passed in 50.06s
+=== SQLite       83 passed, 1 skipped in 14.99s   (teste de RLS pulado: só existe no PostgreSQL)
+```
+Resultado: PASSOU
+
+### S6 — Simulação do Render (imagem Docker + PostgreSQL) — 2026-10-23
+Comando: `docker run -e PORT=10000 -e DATABASE_URL=postgres://...@host.docker.internal:55432/deploy_sim gestao-visitantes-api:local` (+ `python seed.py` no mesmo banco)
+Saída:
+```
+Seed carregado: 5 tipos, 10 cartões, 5 visitas (dados fictícios).
+health :10000 => {"status":"ok"}
+dashboard => {"data_referencia":"2026-10-23","visitas_do_dia":4,"presentes":1,"encerradas_do_dia":1,"veiculos_no_patio":1,"cartoes_pendentes":1,"acessos_negados_hoje":0}
+docker health => healthy
+cartoes_acesso=true, pontos_acesso=true, tipos_visita=true, visitas=true, passagens=true   (relrowsecurity)
+```
+Resultado: PASSOU
+
+### S6 — Regressão local — 2026-10-23
+`docker compose up -d --wait` → api e web *Healthy*; `docker compose --profile test run --rm tests` → `83 passed, 1 skipped`.
+Resultado: PASSOU
+
+### S6 — Vercel
+`frontend/vercel.json` (rewrites para o Render) — **NÃO TESTADO** (sem token da Vercel).
+
 ## Falhas identificadas e corrigidas
 > Exigido na ficha de entrega: pelo menos uma falha real.
 

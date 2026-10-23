@@ -6,8 +6,16 @@ from zoneinfo import ZoneInfo
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BACKEND_DIR / "data"
 
+def normalizar_url(url: str) -> str:
+    """Aceita a URL como o Supabase/Render fornecem (postgres:// ou postgresql://) e usa o driver psycopg 3."""
+    for prefixo in ("postgres://", "postgresql://"):
+        if url.startswith(prefixo):
+            return "postgresql+psycopg://" + url[len(prefixo):]
+    return url
+
+
 # Caminho absoluto: não depende da pasta onde o uvicorn ou o pytest são executados.
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{(DATA_DIR / 'visitantes.db').as_posix()}")
+DATABASE_URL = normalizar_url(os.getenv("DATABASE_URL", f"sqlite:///{(DATA_DIR / 'visitantes.db').as_posix()}"))
 
 FUSO = ZoneInfo("America/Cuiaba")
 

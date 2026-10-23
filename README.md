@@ -66,6 +66,17 @@ npm run dev                       # http://localhost:5173 (proxy /api → :8000)
 > Se `pytest` acusar `DLL load failed while importing _sqlite3`, o `python` do PATH pode ser o de outro programa; neste laboratório era o do QGIS. Crie o venv com outro interpretador, por exemplo:
 > `uv venv --managed-python --python 3.12 .venv` e `uv pip install -r requirements.txt`. Veja a falha F1 em `docs/EXECUCAO.md`.
 
+### Opção 3: online (Supabase + Render + Vercel, ADR-020)
+> ⚠️ Sem login (ADR-001): a URL pública serve **apenas como demonstração com dados fictícios**.
+
+1. **Supabase:** crie um projeto e copie a string de *Connect › Session pooler* (IPv4). Acrescente `?sslmode=require` ao final, se ela ainda não tiver. As tabelas são criadas pela própria API, com RLS ligado.
+2. **Render:** *New › Blueprint* com este repositório (lê `render.yaml`) e preencha `DATABASE_URL` com a string do Supabase.
+   Para os dados de exemplo, rode na sua máquina: `$env:DATABASE_URL="<string do Supabase>"; cd backend; python seed.py`.
+3. **Vercel:** *Add New › Project* com este repositório e *Root Directory* = `frontend` (lê `vercel.json`). Se o nome do serviço no Render for diferente de `gestao-visitantes-api`, ajuste as URLs em `frontend/vercel.json`.
+4. **Conferência:** `https://<seu-app>.vercel.app/api/health` deve responder `{"status":"ok"}`. Depois rode `$env:BASE_URL="https://<seu-app>.vercel.app"; node scripts/capturas.mjs`. Atenção: o script cria registros fictícios.
+
+Para testar contra PostgreSQL localmente: `TEST_DATABASE_URL=postgres://... pytest` (a suíte apaga e recria as tabelas desse banco; use um banco descartável).
+
 ## Exemplos de uso
 1. **Registrar a visita:** aba *Visitas*. O formulário se adapta ao tipo: o documento é obrigatório quando o tipo exige, e o bloco de veículo só aparece quando o tipo permite. Erros da API aparecem em destaque.
    ![Erro 422](docs/img/02-formulario-erro-422.png)

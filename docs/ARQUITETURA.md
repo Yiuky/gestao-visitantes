@@ -136,6 +136,15 @@ SELECT COUNT(*) FROM passagens WHERE resultado = 'NEGADO' AND date(ocorrido_em) 
 - **Decisão:** publicar como público. Antes do push: dados 100% fictícios, nenhum `.db`/`.env` versionado e varredura de segredos sem ocorrências (registrado em `docs/EXECUCAO.md`). O token vem de variável de ambiente e não é gravado no repositório nem no remoto.
 - **Consequências:** o código, a documentação e o histórico (inclusive nome e e-mail de autor dos commits) ficam públicos. O sistema continua sem login (ADR-001), portanto **não** deve ser publicado online com dados reais sem os itens do Épico A.
 
+### ADR-020 — Deploy online: Supabase + Render + Vercel (S6, pedido do usuário)
+- **Contexto:** o usuário pediu publicação em Vercel/Render/Supabase. O Render gratuito tem disco efêmero (SQLite perderia dados); a Vercel não roda a API FastAPI com SQLite persistente.
+- **Decisão:**
+  - **Supabase** = PostgreSQL gerenciado (`DATABASE_URL` do *Session pooler*, IPv4, `sslmode=require`); `normalizar_url` aceita `postgres://`/`postgresql://` e usa `psycopg` 3.
+  - **Render** = API pela mesma imagem Docker (`render.yaml`), porta via `$PORT`, healthcheck `/api/health`.
+  - **Vercel** = frontend estático (`frontend/vercel.json`) com *rewrite* de `/api`, `/docs` e `/openapi.json` para o Render: mesma origem para o navegador, sem CORS.
+  - **RLS ligado em todas as tabelas** no PostgreSQL (`criar_tabelas`): a API REST automática do Supabase (chave `anon`, pública por definição) não lê nem grava nada; a API do sistema conecta como dona das tabelas.
+- **Consequências:** a suíte roda também em PostgreSQL (`TEST_DATABASE_URL`, 84 testes). O sistema **continua sem login** (ADR-001): online, qualquer pessoa com a URL pode registrar e alterar dados — aceitável só como **demonstração com dados fictícios**; dado real exige o Épico A. O plano gratuito do Render hiberna após inatividade (primeira requisição lenta).
+
 ### ADR-019 — Roteiro E2E com capturas (S5)
 - **Contexto:** as capturas pelo MCP Claude in Chrome falhavam por timeout do CDP, mas as evidências precisam ser reproduzíveis.
 - **Decisão:** `scripts/capturas.mjs` (Node 22+, sem dependências) dirige o Chrome headless via CDP, clica nos botões reais, confere os resultados (E01–E09) e grava `docs/img/`.

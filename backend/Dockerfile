@@ -28,7 +28,9 @@ ENV DATABASE_URL=sqlite:////data/visitantes.db \
     CORS_ORIGINS=http://localhost:8080
 RUN useradd --create-home --uid 10001 app && mkdir -p /data && chown app:app /data
 USER app
+# PORT: o Render define a porta por variável; localmente/compose usa 8000.
+ENV PORT=8000
 EXPOSE 8000
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=5 \
-  CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2).status == 200 else 1)"
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+  CMD python -c "import os,urllib.request,sys; sys.exit(0 if urllib.request.urlopen(f'http://127.0.0.1:{os.environ[\"PORT\"]}/api/health', timeout=2).status == 200 else 1)"
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --forwarded-allow-ips='*'"]

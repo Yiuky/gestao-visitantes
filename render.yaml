@@ -1,0 +1,17 @@
+# Render Blueprint (ADR-020): API em Docker; banco no Supabase (DATABASE_URL, informada no painel do Render).
+# No Render: New > Blueprint > escolher este repositório. Dados exclusivamente fictícios.
+services:
+  - type: web
+    name: gestao-visitantes-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: free
+    region: virginia
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false # Supabase > Connect > Session pooler (IPv4), com ?sslmode=require
+      - key: CORS_ORIGINS
+        value: https://gestao-visitantes.vercel.app

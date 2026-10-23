@@ -7,14 +7,14 @@ from fastapi.responses import JSONResponse
 
 from . import models  # noqa: F401  (registra as tabelas no metadata)
 from .config import CORS_ORIGINS, SETORES
-from .database import Base, SessionLocal, engine
+from .database import SessionLocal, criar_tabelas, engine
 from .routers import cartoes, catraca, dashboard, tipos, visitas
 from .services.regras import RegraViolada, garantir_pontos
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    Base.metadata.create_all(engine)  # ADR-005: create_all, sem Alembic no MVP
+    criar_tabelas(engine)  # ADR-005: create_all, sem Alembic no MVP; RLS no PostgreSQL (ADR-020)
     with SessionLocal() as db:
         garantir_pontos(db)
     yield

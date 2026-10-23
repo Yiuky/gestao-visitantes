@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 
 from app import models  # noqa: E402,F401
-from app.database import Base, criar_engine, get_db  # noqa: E402
+from app.database import Base, criar_engine, criar_tabelas, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.relogio import get_agora, get_hoje  # noqa: E402
 from app.services.regras import garantir_pontos  # noqa: E402
@@ -28,11 +28,17 @@ def hoje() -> date:
 
 @pytest.fixture
 def engine(tmp_path):
-    eng = criar_engine(f"sqlite:///{(tmp_path / 'teste.db').as_posix()}")
-    Base.metadata.create_all(eng)
+    # TEST_DATABASE_URL (ex.: PostgreSQL em contêiner) roda a mesma suíte no banco de produção (ADR-020).
+    url_pg = os.getenv("TEST_DATABASE_URL")
+    eng = criar_engine(url_pg or f"sqlite:///{(tmp_path / 'teste.db').as_posix()}")
+    if url_pg:
+        Base.metadata.drop_all(eng)  # tabelas e sequências limpas a cada teste
+    criar_tabelas(eng)
     with sessionmaker(bind=eng)() as db:
         garantir_pontos(db)  # mesmo seed fixo que a API aplica ao subir
     yield eng
+    if url_pg:
+        Base.metadata.drop_all(eng)
     eng.dispose()
 
 

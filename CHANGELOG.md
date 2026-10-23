@@ -2,6 +2,14 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Uma entrada por sprint.
 
+## [Não publicado]
+
+### S6 — Preparação do deploy (Supabase + Render + Vercel) — 2026-10-23
+- Adicionado: suporte a PostgreSQL (`psycopg[binary]` 3.3.2, `normalizar_url`, pool com `pre_ping`/`recycle`).
+- Adicionado: RLS ligado em todas as tabelas no PostgreSQL (`criar_tabelas`), bloqueando a API REST automática do Supabase.
+- Adicionado: `render.yaml`, `frontend/vercel.json`, porta via `$PORT` no Dockerfile, `tests/test_infra.py`; suíte roda em PostgreSQL com `TEST_DATABASE_URL`.
+- Adicionado: ADR-020 e sprint S6 no backlog.
+
 ## [0.1.0] — 2026-10-23
 
 ### S5 — Homologação, README e publicação
