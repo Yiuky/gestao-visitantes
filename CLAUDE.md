@@ -43,7 +43,7 @@ docker compose up -d                     # http://localhost:8080
 4. Não avance se o gate da sprint falhar.
 5. Mudança de escopo só com novo ADR em `docs/ARQUITETURA.md`.
 6. Commits pequenos e descritivos (`feat:`, `fix:`, `test:`, `docs:`, `chore:`).
-7. Push para o GitHub **somente com autorização explícita** do usuário, em repositório **privado** via `gh`.
+7. Push para o GitHub **somente com autorização explícita** do usuário, via `gh`. O repositório é **público** por decisão do usuário (ADR-018): nunca versionar dado real, `.db`, `.env` ou token.
 
 ## Regras de negócio que não podem ser quebradas
 - Ciclo da visita: `AGENDADA → PRESENTE → ENCERRADA` e `AGENDADA → CANCELADA`. Transições só pelos endpoints `/entrada`, `/saida` e `/cancelar`; o PUT nunca muda status.

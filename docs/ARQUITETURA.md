@@ -129,6 +129,17 @@ SELECT COUNT(*) FROM passagens WHERE resultado = 'NEGADO' AND date(ocorrido_em) 
 
 ### ADR-017 — Indicador de negados antes da S4 (S0)
 - **Decisão:** na S3 `acessos_negados_hoje` retorna 0 (tabela `passagens` ainda não existe); a S4 troca pelo COUNT real (T49).
+- **Situação:** encerrado na S4 (COUNT por intervalo, ADR-016).
+
+### ADR-018 — Repositório público no GitHub (S5, decisão do usuário)
+- **Contexto:** o handoff e o `CLAUDE.md` previam repositório **privado**; na S5 o usuário pediu explicitamente publicação **pública**.
+- **Decisão:** publicar como público. Antes do push: dados 100% fictícios, nenhum `.db`/`.env` versionado e varredura de segredos sem ocorrências (registrado em `docs/EXECUCAO.md`). O token vem de variável de ambiente e não é gravado no repositório nem no remoto.
+- **Consequências:** o código, a documentação e o histórico (inclusive nome e e-mail de autor dos commits) ficam públicos. O sistema continua sem login (ADR-001), portanto **não** deve ser publicado online com dados reais sem os itens do Épico A.
+
+### ADR-019 — Roteiro E2E com capturas (S5)
+- **Contexto:** as capturas pelo MCP Claude in Chrome falhavam por timeout do CDP, mas as evidências precisam ser reproduzíveis.
+- **Decisão:** `scripts/capturas.mjs` (Node 22+, sem dependências) dirige o Chrome headless via CDP, clica nos botões reais, confere os resultados (E01–E09) e grava `docs/img/`.
+- **Consequências:** qualquer pessoa reproduz as evidências com a stack Docker e o seed.
 
 
 ## Validação por camada

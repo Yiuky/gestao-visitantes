@@ -227,7 +227,46 @@ Resultado observado: **LIBERADO**; trajeto "Leitor Jurídico · entrada 23/10/20
 Resultado: PASSOU
 
 ## S5 — Homologação e GitHub
-_(pendente)_
+
+### S5 — Roteiro E2E com capturas (`scripts/capturas.mjs`, ADR-019) — 2026-10-23
+Comando: `docker compose down -v; docker compose up -d --wait; docker compose run --rm api python seed.py; node scripts/capturas.mjs`
+Primeira execução: 9 passaram, 0 falharam. Ao inspecionar `08-celular-360.png`, o selo "NÃO DEVOLVIDO" e a linha "Veículo TST1A01" apareciam na coluna dos rótulos (falha **F5**, não detectada pela verificação de rolagem). O E09 ganhou a checagem `invadeRotulo`.
+Execução com o CSS antigo (prova de que o teste detecta a falha):
+```
+FALHOU  E09  360 px sem rolagem horizontal; tabela vira cartões; nada na coluna do rótulo  → {"largura":360,"rolagem":360,"cabecalho":"none","invadeRotulo":3}
+8 passaram, 1 falharam
+```
+Execução após a correção:
+```
+PASSOU  E01  Painel com seed: 4 do dia, 1 presente, 1 encerrada
+PASSOU  E02  Placa inválida mostra o 422 da API na tela  → Placa: placa inválida; use o formato AAA9999 ou AAA9A99
+PASSOU  E03  Visita válida registrada como AGENDADA
+PASSOU  E04  Entrada com cartão já em uso → 409 visível  → cartão V-001 não está disponível (status: EM_USO)
+PASSOU  E05  Leitor de outro setor → NEGADO com motivo  → ... Motivo: área não autorizada: destino da visita é Jurídico
+PASSOU  E06  Leitor do setor de destino → LIBERADO; trajeto com 2 passagens
+PASSOU  E07  Painel: 5 do dia, 2 presentes, 1 negado; último local do Bruno = Leitor Jurídico
+PASSOU  E08  Impressão mostra só a lista de evacuação  → {"topo":"none","indicadores":"none","cabecalho":"block","linhas":2}
+PASSOU  E09  360 px sem rolagem horizontal; tabela vira cartões; nada na coluna do rótulo  → {"largura":360,"rolagem":360,"cabecalho":"none","invadeRotulo":0}
+9 passaram, 0 falharam
+```
+Também houve uma falha **do próprio script** (não do app): `TypeError: Cannot read properties of undefined (reading 'value')` ao escolher o tipo antes de a lista carregar; o script passou a esperar as opções.
+Capturas: `docs/img/01-painel.png` … `08-celular-360.png` e `docs/img/lista-evacuacao.pdf`.
+
+### S5 — Suíte final, build e segurança do repositório — 2026-10-23
+Comando: `pytest`, `npm run build`, `git ls-files | grep -E '\.db$|\.env|\.sqlite'`, `git grep` por chaves/senhas/tokens (`ghp_`, `github_pat_`, `sk-ant-`, `AKIA`) e CPF formatado
+Saída:
+```
+============================= 79 passed in 14.29s =============================
+✓ built in 845ms
+--- .db/.env versionados (vazio = ok):
+--- segredos:
+--- padroes de token:
+--- CPF formatado:
+```
+Resultado: PASSOU (nenhuma ocorrência)
+
+### S5 — GitHub
+Ver "Publicação" abaixo.
 
 ## Falhas identificadas e corrigidas
 > Exigido na ficha de entrega: pelo menos uma falha real.
@@ -238,9 +277,13 @@ _(pendente)_
 | F2 | S2 | Erro 409 da Entrada não aparecia para o usuário (alerta em `top=-102px`) | aviso fica no topo da página e a ação acontece no fim da tabela | `Aviso` faz `scrollIntoView` ao surgir | B05b (MCP) |
 | F3 | S2 | Bordas da tabela desalinhadas na coluna Ações | `td` com `display:flex` deixa de ser célula | botões num `div.acoes` dentro do `td` | inspeção visual B05b |
 | F4 | S3 | Com a API parada, tela mostrava "Erro 500 ao falar com a API" | proxy do Vite responde 500 sem JSON (o `fetch` não falha) | 5xx sem corpo JSON → "API indisponível…" | P05b (MCP) |
+| F5 | S5 | Em 360 px, selos e sublinhas caíam na coluna do rótulo | `td` em grid: cada filho virava item próprio do grid | rótulo `position:absolute` + `padding-left` na célula | E09 (`invadeRotulo` 3 → 0) |
 
 ## Resumo final dos testes
 | Suíte | Passou | Falhou | Corrigido | Não testado |
 |---|---|---|---|---|
-| Automatizados (pytest) | | | | |
-| Roteiro manual (M01–M12) | | | | |
+| Automatizados (pytest, local e no Docker) | 79 | 0 | F1 (ambiente) | — |
+| Botões via MCP (B01–B29, P01–P07, C01–C05) | 40 | 0 (após correção) | F2, F3, F4 | P07 (impressão: coberta por E08) |
+| E2E com capturas (E01–E09) | 9 | 0 (após correção) | F5 | — |
+| Docker (D01–D04) | 4 | 0 | — | — |
+| Roteiro manual (M01–M12) | 12 | 0 | — | — |

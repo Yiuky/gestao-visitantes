@@ -15,7 +15,7 @@
 | S3 | ✅ | Painel: 6 indicadores por COUNT, lista de presentes, impressão | Testes de indicadores verdes; CA3 (painel e pesquisa) |
 | S4 | ✅ | Extensão: catraca simulada, passagens, trajeto, último local (RN21–RN26) | Testes de catraca verdes; CA3 (rastreamento) |
 | S4b | ✅ | Docker: imagens api/web, compose, testes no contêiner (ADR-015) | `docker compose` build/test/up ok; persistência por volume |
-| S5 | ⬜ | Homologação, README, capturas, reflexão, GitHub privado | Suíte verde; README completo; push autorizado |
+| S5 | ✅ | Homologação, README, capturas, reflexão, GitHub (público, ADR-018) | Suíte verde; README completo; push autorizado |
 
 **Regra de tempo:** se a S3 terminar com pouco tempo de encontro, pule para a S5 e marque a S4 como ⬜ pendente no README.
 
@@ -54,10 +54,10 @@
 - [x] Volume nomeado para o SQLite
 
 **S5**
-- [ ] Roteiro de homologação completo
-- [ ] README com resultados reais, capturas, LGPD, limitações e reflexão
-- [ ] Revisão do diff; `git status` limpo
-- [ ] Push para repositório privado **somente com autorização**
+- [x] Roteiro de homologação completo (E2E E01–E09 + segurança do repositório)
+- [x] README com resultados reais, capturas, LGPD, limitações e reflexão
+- [x] Revisão do diff; `git status` limpo
+- [x] Push autorizado pelo usuário; repositório **público** (ADR-018)
 
 ## Épicos de evolução (fora do encontro)
 

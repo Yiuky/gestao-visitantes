@@ -2,7 +2,13 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Uma entrada por sprint.
 
-## [Não publicado]
+## [0.1.0] — 2026-10-23
+
+### S5 — Homologação, README e publicação
+- Adicionado: `scripts/capturas.mjs`, roteiro E2E sem dependências (Chrome headless via CDP) com 9 verificações e capturas em `docs/img/` (ADR-019).
+- Adicionado: README completo (instalação local e Docker, uso com capturas, resultados, LGPD, limitações, reflexão) e mapa `docs/EVIDENCIAS.md`.
+- Adicionado: ADR-018 (repositório público por decisão do usuário).
+- Corrigido (F5): em 360 px, selos e sublinhas caíam na coluna do rótulo do cartão.
 
 ### S4b — Docker — 2026-10-23
 - Adicionado: `backend/Dockerfile` multi-stage (`api` com usuário não-root e healthcheck; `test` com pytest).

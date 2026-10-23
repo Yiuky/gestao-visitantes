@@ -182,7 +182,11 @@ td > .badge:first-child { margin-left: 0; }
     background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio);
     margin-bottom: 12px; padding: 4px 0;
   }
-  .tabela td { border: 0; padding: 6px 12px; display: grid; grid-template-columns: 110px 1fr; gap: 8px; }
-  .tabela td::before { content: attr(data-label); font-size: .8rem; color: var(--suave); font-weight: 600; }
+  /* Rótulo posicionado à esquerda: todo o conteúdo da célula (texto, selos, sublinhas) fica na coluna de valores. */
+  .tabela td { border: 0; padding: 6px 12px 6px 130px; position: relative; min-height: 32px; }
+  .tabela td::before {
+    content: attr(data-label); position: absolute; left: 12px; top: 7px; width: 110px;
+    font-size: .8rem; color: var(--suave); font-weight: 600;
+  }
   .filtros label { flex-basis: 100%; max-width: none; }
 }
