@@ -9,8 +9,8 @@
 | Sprint | Status | Objetivo | Gate (condição para avançar) |
 |---|---|---|---|
 | M0 | ✅ | Documentação de requisitos, arquitetura e plano | Kit de documentos na pasta |
-| S0 | ⬜ | Conferir estrutura e docs, verificar ferramentas, iniciar Git | Ferramentas verificadas; Git inicializado; 1º commit |
-| S1 | ⬜ | API núcleo: tipos, cartões, visitas, entrada/saída/cancelar (RN01–RN20) | `pytest -q` verde; persistência após reinício |
+| S0 | ✅ | Conferir estrutura e docs, verificar ferramentas, iniciar Git | Ferramentas verificadas; Git inicializado; 1º commit |
+| S1 | ✅ | API núcleo: tipos, cartões, visitas, entrada/saída/cancelar (RN01–RN20) | `pytest -q` verde; persistência após reinício |
 | S2 | ⬜ | Frontend: Visitas, Tipos, Cartões, rodapé de privacidade | `npm run build` ok; CA1 e CA2 pela tela; 360 px ok |
 | S3 | ⬜ | Painel: 6 indicadores por COUNT, lista de presentes, impressão | Testes de indicadores verdes; CA3 (painel e pesquisa) |
 | S4 | ⬜ | Extensão: catraca simulada, passagens, trajeto, último local (RN21–RN26) | Testes de catraca verdes; CA3 (rastreamento) |
@@ -22,12 +22,12 @@
 ### Itens por sprint
 
 **S1**
-- [ ] Modelos e schemas (tipos_visita, cartoes_acesso, visitas)
-- [ ] `services/regras.py` com validações por tipo e transições
-- [ ] Routers de tipos, cartões e visitas; `/api/setores`; `/api/health`
-- [ ] `nome_exibido` e `documento_mascarado` no `VisitaResumo`
-- [ ] Testes de `docs/TESTES.md` (S1)
-- [ ] `backend/seed.py`
+- [x] Modelos e schemas (tipos_visita, cartoes_acesso, visitas)
+- [x] `services/regras.py` com validações por tipo e transições
+- [x] Routers de tipos, cartões e visitas; `/api/setores`; `/api/health`
+- [x] `nome_exibido` e `documento_mascarado` no `VisitaResumo`
+- [x] Testes de `docs/TESTES.md` (S1)
+- [x] `backend/seed.py`
 
 **S2**
 - [ ] Projeto Vite com proxy `/api`
