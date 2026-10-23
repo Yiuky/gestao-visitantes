@@ -1,0 +1,42 @@
+# Gestão de visitantes — execução e testes em contêiner (ADR-015). Dados fictícios.
+#   docker compose build
+#   docker compose --profile test run --rm tests     # pytest dentro do contêiner
+#   docker compose up -d                             # http://localhost:8080 (Swagger em /docs)
+#   docker compose run --rm api python seed.py       # opcional: dados fictícios
+name: gestao-visitantes
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: api
+    image: gestao-visitantes-api:local
+    environment:
+      DATABASE_URL: sqlite:////data/visitantes.db
+      CORS_ORIGINS: http://localhost:8080
+    volumes:
+      - dados:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+    image: gestao-visitantes-web:local
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  tests:
+    profiles: ["test"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: test
+    image: gestao-visitantes-tests:local
+
+volumes:
+  dados:

@@ -186,6 +186,46 @@ Estado: Caio Fictício PRESENTE, destino Tecnologia, cartão V-001 (`RFID-TESTE-
 | C04 | Código digitado `RFID-DESCONHECIDO-9`, sentido Saída, Portaria | NEGADO · "código de leitura desconhecido" | PASSOU |
 | C05 | Selecionar visita no trajeto + Atualizar listas | trajeto NEGADO Diretoria 10:54 → LIBERADO Tecnologia 10:55; sem alerta | PASSOU |
 
+## S4b — Docker (ADR-015)
+
+### S4b — D01 build — 2026-10-23
+Comando: `docker compose --profile test build`
+Saída: `Image gestao-visitantes-web:local Built` · `Image gestao-visitantes-api:local Built` · `Image gestao-visitantes-tests:local Built`
+Resultado: PASSOU (python:3.12-slim · node:22-alpine → nginx:1.27-alpine)
+
+### S4b — D02 testes no contêiner — 2026-10-23
+Comando: `docker compose --profile test run --rm tests`
+Saída: `79 passed, 1 warning in 17.90s` (aviso de depreciação do `httpx` no TestClient)
+Resultado: PASSOU
+
+### S4b — D03 stack no ar — 2026-10-23
+Comando: `docker compose up -d` + requisições a `http://localhost:8080`
+Saída:
+```
+Container gestao-visitantes-api-1 Healthy
+health via web:8080 => {"status":"ok"}
+api   Up 6 seconds (healthy)   8000/tcp
+web   Up ...                   0.0.0.0:8080->80/tcp
+index: 200 · docs: 200 · pontos: 6
+```
+Resultado: PASSOU (a API não é publicada; só o nginx, que repassa `/api`, `/docs` e `/openapi.json`)
+
+### S4b — D04 persistência por volume — 2026-10-23
+Comando: `docker compose run --rm api python seed.py` → `GET /api/dashboard` → `docker compose restart api` → `GET /api/dashboard`
+Saída:
+```
+Seed carregado: 5 tipos, 10 cartões, 5 visitas (dados fictícios).
+antes:  {"data_referencia":"2026-10-23","visitas_do_dia":4,"presentes":1,"encerradas_do_dia":1,"veiculos_no_patio":1,"cartoes_pendentes":1,"acessos_negados_hoje":0}
+depois: {"data_referencia":"2026-10-23","visitas_do_dia":4,"presentes":1,"encerradas_do_dia":1,"veiculos_no_patio":1,"cartoes_pendentes":1,"acessos_negados_hoje":0}
+gestao-visitantes_dados
+```
+Resultado: PASSOU (contêiner em UTC, "hoje" continua America/Cuiaba via `tzdata`)
+
+### S4b — botão no Docker (MCP) — 2026-10-23
+Ação: `http://localhost:8080` › Catraca › atalho V-002 › Leitor Jurídico › Ler cartão
+Resultado observado: **LIBERADO**; trajeto "Leitor Jurídico · entrada 23/10/2026 10:58"
+Resultado: PASSOU
+
 ## S5 — Homologação e GitHub
 _(pendente)_
 

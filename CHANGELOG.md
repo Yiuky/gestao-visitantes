@@ -4,6 +4,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). 
 
 ## [Não publicado]
 
+### S4b — Docker — 2026-10-23
+- Adicionado: `backend/Dockerfile` multi-stage (`api` com usuário não-root e healthcheck; `test` com pytest).
+- Adicionado: `frontend/Dockerfile` (build Vite + nginx) e `frontend/nginx.conf` com proxy de `/api` e `/docs` e cabeçalhos de segurança.
+- Adicionado: `docker-compose.yml` (api + web em :8080, volume `dados`, perfil `test`) e `.dockerignore`.
+
 ### S4 — Catraca simulada e rastreamento — 2026-10-23
 - Adicionado: modelos `pontos_acesso` (seed fixo automático) e `passagens` (somente inserção; PUT/DELETE → 405).
 - Adicionado: `POST /api/catraca/passagens` (RN21–RN23), `GET /api/pontos-acesso`, `GET /api/catraca/passagens[/{id}]`, `GET /api/visitas/{id}/passagens`.
