@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Banco de dados local (nunca versionar)
+*.db
+*.sqlite
+*.sqlite3
+
+# Segredos
+.env
+.env.*
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
