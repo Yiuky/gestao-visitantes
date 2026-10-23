@@ -12,7 +12,7 @@
 | API, frontend e banco integrados (3,0) | ação na tela → API → SQLite → painel; persistência após reinício | B01–B29, P01–P06, C01–C05 (MCP); E01–E09 (E2E); M04, D04 | ✅ |
 | CRUD e indicadores reais (2,0) | CRUD de visitas, tipos e cartões; 6 indicadores por `COUNT` que mudam a cada operação | `tests/test_*`, T30–T39, P02–P04, E07 | ✅ |
 | Testes e correções demonstráveis (1,0) | 79 testes pytest; 5 falhas reais encontradas e corrigidas (F1–F5) | `docs/EXECUCAO.md` → "Falhas identificadas e corrigidas" | ✅ |
-| GitHub e histórico de commits (1,0) | um commit por sprint com mensagem descritiva; push autorizado | `git log --oneline`; URL em `docs/EXECUCAO.md` → "Publicação" | ver Publicação |
+| GitHub e histórico de commits (1,0) | um commit por sprint com mensagem descritiva; push autorizado | https://github.com/Yiuky/gestao-visitantes (público, 8+ commits) | ✅ |
 | Reflexão obrigatória (README) | decisão técnica + sugestão do Claude Code revisada | `README.md` → "Reflexão" (rascunho para o participante revisar) | ✅ |
 
 ## 2. Requisitos mínimos compartilhados
@@ -41,7 +41,7 @@
 | Três indicadores mudam conforme os registros | P02–P04, E07, T31–T39 | ✅ |
 | Testes executados e resultado registrado (passou/falhou/não testado) | `docs/EXECUCAO.md` → "Resumo final dos testes" | ✅ |
 | README e `docs/EXECUCAO.md` atualizados | ambos no commit da S5 | ✅ |
-| Repositório publicado com aprovação e sem credenciais | varredura de segredos sem ocorrências (S5); publicação autorizada pelo usuário (ADR-018) | ver Publicação |
+| Repositório publicado com aprovação e sem credenciais | https://github.com/Yiuky/gestao-visitantes; varredura de segredos sem ocorrências; autorização do usuário (ADR-018) | ✅ |
 | Falha identificada e corrigida | F1–F5 | ✅ |
 
 ## 5. Pedidos adicionais do usuário

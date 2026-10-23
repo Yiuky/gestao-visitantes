@@ -265,8 +265,25 @@ Saída:
 ```
 Resultado: PASSOU (nenhuma ocorrência)
 
-### S5 — GitHub
-Ver "Publicação" abaixo.
+### S5 — Publicação no GitHub — 2026-10-23
+Autorização: pedido explícito do usuário para publicar **público** usando o token das variáveis de ambiente (ADR-018).
+Comando (token passado só no ambiente do processo, nunca exibido nem gravado no repositório):
+`GH_TOKEN=<token do ambiente> gh repo create gestao-visitantes --public --source . --remote origin --push`
+Saída:
+```
+https://github.com/Yiuky/gestao-visitantes
+To https://github.com/Yiuky/gestao-visitantes.git
+ * [new branch]      HEAD -> main
+branch 'main' set up to track 'origin/main'.
+```
+Verificação:
+```
+https://github.com/Yiuky/gestao-visitantes · PUBLIC · branch main
+commits remotos: 8 · último: 0afdd93 docs: homologação, capturas, README e mapa de evidências
+origin	https://github.com/Yiuky/gestao-visitantes.git (sem token na URL)
+```
+Resultado: PASSOU
+**URL:** https://github.com/Yiuky/gestao-visitantes
 
 ## Falhas identificadas e corrigidas
 > Exigido na ficha de entrega: pelo menos uma falha real.

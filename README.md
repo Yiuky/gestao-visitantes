@@ -3,6 +3,8 @@
 > Desafio 06 · Formação Claude Code · SEMA/MT · Laboratório de Engenharia de Software Agêntica
 > **Todos os dados deste projeto são fictícios.** Órgão, pessoas, documentos (`DOC-…`), placas (`TST…`) e cartões (`RFID-TESTE-…`) são inventados.
 
+**Repositório:** https://github.com/Yiuky/gestao-visitantes
+
 Sistema web local para a recepção de um órgão público fictício. O sistema cobre:
 - o registro de visitas por tipo configurável;
 - a entrada e a saída com cartão de acesso;
