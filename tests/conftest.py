@@ -16,6 +16,7 @@ from app import models  # noqa: E402,F401
 from app.database import Base, criar_engine, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.relogio import get_agora, get_hoje  # noqa: E402
+from app.services.regras import garantir_pontos  # noqa: E402
 
 HOJE = date(2026, 10, 23)
 
@@ -29,6 +30,8 @@ def hoje() -> date:
 def engine(tmp_path):
     eng = criar_engine(f"sqlite:///{(tmp_path / 'teste.db').as_posix()}")
     Base.metadata.create_all(eng)
+    with sessionmaker(bind=eng)() as db:
+        garantir_pontos(db)  # mesmo seed fixo que a API aplica ao subir
     yield eng
     eng.dispose()
 

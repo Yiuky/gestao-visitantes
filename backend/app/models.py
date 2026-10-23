@@ -69,3 +69,38 @@ class Visita(Base):
     @property
     def nome_exibido(self) -> str:
         return self.nome_social or self.nome_civil
+
+
+LIBERADO, NEGADO = "LIBERADO", "NEGADO"
+ENTRADA, SAIDA = "ENTRADA", "SAIDA"
+CARTAO = "CARTAO"
+
+
+class PontoAcesso(Base):
+    __tablename__ = "pontos_acesso"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    nome: Mapped[str] = mapped_column(String(60), unique=True)
+    setor: Mapped[str | None] = mapped_column(String(50))  # NULL = área comum (RN23)
+    ativo: Mapped[bool] = mapped_column(Boolean, default=True)
+    # ADR-011: ponto de extensão para biometria futura; no MVP só CARTAO.
+    metodos_aceitos: Mapped[str] = mapped_column(String(30), default=CARTAO)
+
+
+class Passagem(Base):
+    """Somente inserção (RNF07, ADR-008): a API não expõe edição nem exclusão."""
+
+    __tablename__ = "passagens"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    ponto_id: Mapped[int] = mapped_column(ForeignKey("pontos_acesso.id"))
+    codigo_lido: Mapped[str] = mapped_column(String(32))
+    cartao_id: Mapped[int | None] = mapped_column(ForeignKey("cartoes_acesso.id"))
+    visita_id: Mapped[int | None] = mapped_column(ForeignKey("visitas.id"), index=True)
+    credencial_tipo: Mapped[str] = mapped_column(String(10), default=CARTAO)
+    sentido: Mapped[str] = mapped_column(String(7))
+    resultado: Mapped[str] = mapped_column(String(8))
+    motivo: Mapped[str | None] = mapped_column(String(80))
+    ocorrido_em: Mapped[datetime] = mapped_column(DateTime, default=get_agora, index=True)
+
+    ponto: Mapped[PontoAcesso] = relationship()

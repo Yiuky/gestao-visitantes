@@ -3,10 +3,12 @@ import Painel from './pages/Painel.jsx'
 import Visitas from './pages/Visitas.jsx'
 import Tipos from './pages/Tipos.jsx'
 import Cartoes from './pages/Cartoes.jsx'
+import Catraca from './pages/Catraca.jsx'
 
 const ABAS = [
   { id: 'painel', rotulo: 'Painel' },
   { id: 'visitas', rotulo: 'Visitas' },
+  { id: 'catraca', rotulo: 'Catraca' },
   { id: 'tipos', rotulo: 'Tipos de visita' },
   { id: 'cartoes', rotulo: 'Cartões' },
 ]
@@ -43,6 +45,7 @@ export default function App() {
       <main className="conteudo">
         {aba === 'painel' && <Painel versao={versao} />}
         {aba === 'visitas' && <Visitas onMudou={mudou} />}
+        {aba === 'catraca' && <Catraca onMudou={mudou} />}
         {aba === 'tipos' && <Tipos onMudou={mudou} />}
         {aba === 'cartoes' && <Cartoes onMudou={mudou} />}
       </main>

@@ -4,6 +4,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). 
 
 ## [Não publicado]
 
+### S4 — Catraca simulada e rastreamento — 2026-10-23
+- Adicionado: modelos `pontos_acesso` (seed fixo automático) e `passagens` (somente inserção; PUT/DELETE → 405).
+- Adicionado: `POST /api/catraca/passagens` (RN21–RN23), `GET /api/pontos-acesso`, `GET /api/catraca/passagens[/{id}]`, `GET /api/visitas/{id}/passagens`.
+- Alterado: `/api/presentes` com último local real (RN24); `acessos_negados_hoje` por COUNT em intervalo do dia (ADR-016), encerrando o provisório do ADR-017.
+- Adicionado: aba Catraca (simulador com resultado em destaque e trajeto); 14 testes (T40–T49); suíte com 79 testes.
+
 ### S3 — Painel — 2026-10-23
 - Adicionado: `GET /api/dashboard` (6 indicadores por COUNT; negados = 0 até a S4, ADR-017) e `GET /api/presentes`.
 - Adicionado: página Painel com indicadores, "Quem está no prédio agora", botões Atualizar e Imprimir lista de evacuação (CSS de impressão).

@@ -7,14 +7,16 @@ from fastapi.responses import JSONResponse
 
 from . import models  # noqa: F401  (registra as tabelas no metadata)
 from .config import CORS_ORIGINS, SETORES
-from .database import Base, engine
-from .routers import cartoes, dashboard, tipos, visitas
-from .services.regras import RegraViolada
+from .database import Base, SessionLocal, engine
+from .routers import cartoes, catraca, dashboard, tipos, visitas
+from .services.regras import RegraViolada, garantir_pontos
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     Base.metadata.create_all(engine)  # ADR-005: create_all, sem Alembic no MVP
+    with SessionLocal() as db:
+        garantir_pontos(db)
     yield
 
 
@@ -46,3 +48,4 @@ app.include_router(tipos.router)
 app.include_router(cartoes.router)
 app.include_router(visitas.router)
 app.include_router(dashboard.router)
+app.include_router(catraca.router)

@@ -162,3 +162,53 @@ def cancelar_visita(visita: m.Visita) -> m.Visita:
         raise RegraViolada(409, f"só visitas AGENDADA podem ser canceladas (atual: {visita.status})")
     visita.status = m.CANCELADA
     return visita
+
+
+# ---------- Catraca e rastreamento (RN21–RN26) ----------
+PONTOS_PADRAO = [
+    ("Catraca Portaria", None),
+    ("Leitor Atendimento", "Atendimento"),
+    ("Leitor Protocolo", "Protocolo"),
+    ("Leitor Jurídico", "Jurídico"),
+    ("Leitor Tecnologia", "Tecnologia"),
+    ("Leitor Diretoria", "Diretoria"),
+]
+
+
+def garantir_pontos(db: Session) -> None:
+    """Seed fixo dos pontos de acesso, só quando a tabela está vazia."""
+    if not _existe(db, select(m.PontoAcesso.id)):
+        db.add_all(m.PontoAcesso(nome=nome, setor=setor) for nome, setor in PONTOS_PADRAO)
+        db.commit()
+
+
+def registrar_passagem(db: Session, ponto: m.PontoAcesso, codigo_lido: str, sentido: str, agora: datetime) -> m.Passagem:
+    """RN21: toda leitura vira Passagem, liberada ou negada; nada é descartado."""
+    cartao = db.scalar(select(m.CartaoAcesso).where(m.CartaoAcesso.codigo_leitura == codigo_lido))
+    visita = None
+    if cartao is not None and cartao.status == m.EM_USO:
+        visita = db.scalar(select(m.Visita).where(m.Visita.cartao_id == cartao.id, m.Visita.status == m.PRESENTE))
+
+    # RN22, na ordem em que o motivo é mais útil para quem está na portaria
+    if cartao is None:
+        motivo = "código de leitura desconhecido"
+    elif not ponto.ativo:
+        motivo = "ponto de acesso inativo"
+    elif m.CARTAO not in ponto.metodos_aceitos.split(","):
+        motivo = "ponto não aceita cartão"
+    elif cartao.status != m.EM_USO:
+        motivo = f"cartão {cartao.codigo} não está em uso ({cartao.status})"
+    elif visita is None:
+        motivo = "nenhuma visita presente vinculada ao cartão"
+    elif ponto.setor is not None and ponto.setor != visita.setor_destino:  # RN23: setor NULL = área comum
+        motivo = f"área não autorizada: destino da visita é {visita.setor_destino}"
+    else:
+        motivo = None
+
+    passagem = m.Passagem(
+        ponto=ponto, codigo_lido=codigo_lido, cartao_id=cartao.id if cartao else None,
+        visita_id=visita.id if visita else None, credencial_tipo=m.CARTAO, sentido=sentido,
+        resultado=m.NEGADO if motivo else m.LIBERADO, motivo=motivo, ocorrido_em=agora,
+    )
+    db.add(passagem)
+    return passagem

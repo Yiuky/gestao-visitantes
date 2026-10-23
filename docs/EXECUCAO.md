@@ -169,7 +169,22 @@ Banco recarregado com `seed.py`; API reiniciada com o router novo.
 | P07 | Imprimir lista de evacuação (M11) | NÃO TESTADO pelo MCP (`window.print` abre diálogo que bloqueia a automação); verificado na S5 por `Page.printToPDF` | NÃO TESTADO |
 
 ## S4 — Catraca e rastreamento (extensão)
-_(pendente)_
+
+### S4 — Testes automatizados — 2026-10-23
+Comando: `pytest -q tests/test_catraca_rastreamento.py` e suíte completa
+Saída: `14 passed in 2.65s` · `============================= 79 passed in 13.83s =============================`
+Resultado: PASSOU (T40–T49 + seed de pontos, 404/422 da leitura, trajeto 404, negados de ontem fora da contagem — ADR-016)
+
+### S4 — Simulador pela tela (MCP Claude in Chrome) — 2026-10-23
+Estado: Caio Fictício PRESENTE, destino Tecnologia, cartão V-001 (`RFID-TESTE-0001`). Pontos criados pelo `lifespan` ao recarregar a API.
+
+| # | Ação | Resultado observado | Status |
+|---|---|---|---|
+| C01 | Atalho "V-001" + Leitor Diretoria + Ler cartão (M08) | painel vermelho **NEGADO** · "Motivo: área não autorizada: destino da visita é Tecnologia"; trajeto aberto sozinho | PASSOU |
+| C02 | Leitor Tecnologia + Ler cartão (M09) | painel verde **LIBERADO**; trajeto com 2 passagens em ordem | PASSOU |
+| C03 | Painel após C01–C02 | último local "Leitor Tecnologia"; `acessos_negados_hoje=1` | PASSOU |
+| C04 | Código digitado `RFID-DESCONHECIDO-9`, sentido Saída, Portaria | NEGADO · "código de leitura desconhecido" | PASSOU |
+| C05 | Selecionar visita no trajeto + Atualizar listas | trajeto NEGADO Diretoria 10:54 → LIBERADO Tecnologia 10:55; sem alerta | PASSOU |
 
 ## S5 — Homologação e GitHub
 _(pendente)_

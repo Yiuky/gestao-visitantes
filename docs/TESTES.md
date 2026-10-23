@@ -101,8 +101,8 @@ Cada botão da interface é acionado no navegador real e o efeito conferido na t
 | M05 | Dar entrada escolhendo cartão | Status PRESENTE; painel atualiza | ✅ S2 (B07) e S3 (P02) |
 | M06 | Tentar dar entrada noutra visita com o mesmo cartão | Cartão não aparece como disponível ou erro 409 visível | ✅ S2 (B07: modal só lista DISPONÍVEIS) |
 | M07 | Tentar excluir visita PRESENTE | Ação indisponível ou erro 409 | ✅ S2 (B06: ação indisponível) |
-| M08 | Simular catraca em leitor de outro setor | NEGADO em destaque | ⬜ |
-| M09 | Simular leitor do setor de destino | LIBERADO; último local no painel | ⬜ |
+| M08 | Simular catraca em leitor de outro setor | NEGADO em destaque | ✅ S4 (C01) |
+| M09 | Simular leitor do setor de destino | LIBERADO; último local no painel | ✅ S4 (C02, C03) |
 | M10 | Saída sem devolução | Cartões pendentes +1 | ✅ S3 (P02) |
 | M11 | Imprimir lista de evacuação | Prévia só com a lista | ⬜ |
 | M12 | Repetir M03–M05 em 360 px | Layout legível, sem rolagem horizontal | ✅ S2 (B29, iframe 360 px) |

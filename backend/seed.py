@@ -10,11 +10,13 @@ from sqlalchemy import func, select
 from app import models as m
 from app.database import Base, SessionLocal, engine
 from app.relogio import get_agora, get_hoje
+from app.services.regras import garantir_pontos
 
 
 def main() -> None:
     Base.metadata.create_all(engine)
     with SessionLocal() as db:
+        garantir_pontos(db)  # pontos de acesso fixos (seção 8)
         if db.scalar(select(func.count()).select_from(m.TipoVisita)):
             print("Banco já possui dados; seed ignorado.")
             return

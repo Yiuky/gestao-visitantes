@@ -158,6 +158,52 @@ class Presente(BaseModel):
     desde: datetime | None
 
 
+class PontoAcessoOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    nome: str
+    setor: str | None
+    ativo: bool
+    metodos_aceitos: str
+
+
+class LeituraIn(BaseModel):
+    codigo_lido: str = Field(min_length=1, max_length=32)
+    ponto_id: int
+    sentido: Literal["ENTRADA", "SAIDA"] = "ENTRADA"
+
+    _codigo = field_validator("codigo_lido", mode="before")(_strip)
+
+
+class PassagemOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    ponto_id: int
+    ponto_nome: str
+    codigo_lido: str
+    cartao_id: int | None
+    visita_id: int | None
+    credencial_tipo: str
+    sentido: str
+    resultado: Literal["LIBERADO", "NEGADO"]
+    motivo: str | None
+    ocorrido_em: datetime
+
+    @classmethod
+    def de(cls, p) -> "PassagemOut":
+        return cls(
+            id=p.id, ponto_id=p.ponto_id, ponto_nome=p.ponto.nome, codigo_lido=p.codigo_lido, cartao_id=p.cartao_id,
+            visita_id=p.visita_id, credencial_tipo=p.credencial_tipo, sentido=p.sentido, resultado=p.resultado,
+            motivo=p.motivo, ocorrido_em=p.ocorrido_em,
+        )
+
+
+class LeituraOut(BaseModel):
+    resultado: Literal["LIBERADO", "NEGADO"]
+    motivo: str | None
+    passagem: PassagemOut
+
+
 class EntradaIn(BaseModel):
     cartao_id: int
 
