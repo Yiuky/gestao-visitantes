@@ -52,7 +52,8 @@
 | Ambiente e testes com Docker | ADR-015; `docker-compose.yml`; D01–D04; 79 testes no contêiner | ✅ |
 | Backlog, changelog e log atualizados | `docs/BACKLOG.md`, `CHANGELOG.md`, `docs/EXECUCAO.md` (um registro por sprint) | ✅ |
 | Mapa de evidências | este arquivo | ✅ |
-| Execução por sprints | commits S0, S1, S2, S3, S4, S4b e S5 em `git log` | ✅ |
+| Execução por sprints | commits S0, S1, S2, S3, S4, S4b, S5 e S6 em `git log` | ✅ |
+| Publicação online (Vercel/Render/Supabase) | https://gestao-visitantes.vercel.app; `/api/health` 200; E2E online 9/9; capturas em `docs/img/online/` (ADR-020) | ✅ |
 
 ## 6. Capturas (`docs/img/`, geradas por `scripts/capturas.mjs`)
 

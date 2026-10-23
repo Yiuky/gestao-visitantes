@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url'
 
 const BASE = process.env.BASE_URL || 'http://localhost:8080'
 const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe'
-const SAIDA = resolve(dirname(fileURLToPath(import.meta.url)), '../docs/img')
+const SAIDA = resolve(dirname(fileURLToPath(import.meta.url)), '..', process.env.CAPTURAS_DIR || 'docs/img')
 const PORTA = 9333
 const espera = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -96,7 +96,7 @@ class Pagina {
     }
     const { data } = await this.enviar('Page.captureScreenshot', params)
     writeFileSync(join(SAIDA, nome), Buffer.from(data, 'base64'))
-    console.log(`        captura: docs/img/${nome}`)
+    console.log(`        captura: ${join(SAIDA, nome)}`)
   }
 }
 
@@ -141,7 +141,9 @@ async function main() {
     await p.ir(BASE)
     await p.esperar(() => document.querySelector('[data-indicador=visitas_do_dia] .valor')?.textContent !== '–')
     let ind = await p.avaliar(H.indicadores)
-    confere('E01', 'Painel com seed: 4 do dia, 1 presente, 1 encerrada', ind.visitas_do_dia === '4' && ind.presentes === '1' && ind.encerradas_do_dia === '1', JSON.stringify(ind))
+    // Valores iniciais: o E07 confere a variação, então o roteiro serve ao seed.py (4·1·1) e ao seed_api.mjs (5·1·2).
+    const base = Object.fromEntries(Object.entries(ind).map(([k, v]) => [k, Number(v)]))
+    confere('E01', 'Painel carregado com o seed (há presente e visitas do dia)', base.visitas_do_dia >= 4 && base.presentes >= 1, JSON.stringify(ind))
     await p.capturar('01-painel.png')
 
     // 2. Formulário com erro 422 da API (placa inválida) e depois registro válido
@@ -206,11 +208,12 @@ async function main() {
 
     // 5. Painel reflete as operações e o último local
     await p.avaliar(H.clicarAba, 'Painel')
-    await p.esperar(() => document.querySelector('[data-indicador=acessos_negados_hoje] .valor')?.textContent === '1')
+    await p.esperar((n) => document.querySelector('[data-indicador=acessos_negados_hoje] .valor')?.textContent === String(n), base.acessos_negados_hoje + 1)
     ind = await p.avaliar(H.indicadores)
     const local = await p.avaliar(() => [...document.querySelectorAll('tbody tr')].find((r) => r.textContent.includes('Bruno'))?.children[3].textContent)
-    confere('E07', 'Painel: 5 do dia, 2 presentes, 1 negado; último local do Bruno = Leitor Jurídico',
-      ind.visitas_do_dia === '5' && ind.presentes === '2' && ind.acessos_negados_hoje === '1' && local === 'Leitor Jurídico', `${JSON.stringify(ind)} · ${local}`)
+    confere('E07', 'Painel: do dia +1, presentes +1, negados +1; último local do Bruno = Leitor Jurídico',
+      Number(ind.visitas_do_dia) === base.visitas_do_dia + 1 && Number(ind.presentes) === base.presentes + 1 &&
+      Number(ind.acessos_negados_hoje) === base.acessos_negados_hoje + 1 && local === 'Leitor Jurídico', `${JSON.stringify(ind)} · ${local}`)
     await p.capturar('06-painel-presentes.png')
 
     // 6. Impressão da lista de evacuação (M11)
@@ -221,11 +224,11 @@ async function main() {
       cabecalho: getComputedStyle(document.querySelector('.so-imprimir')).display,
       linhas: document.querySelectorAll('.lista-evacuacao tbody tr').length,
     }))
-    confere('E08', 'Impressão mostra só a lista de evacuação', impressao.topo === 'none' && impressao.indicadores === 'none' && impressao.cabecalho === 'block' && impressao.linhas === 2, JSON.stringify(impressao))
+    confere('E08', 'Impressão mostra só a lista de evacuação', impressao.topo === 'none' && impressao.indicadores === 'none' && impressao.cabecalho === 'block' && impressao.linhas === base.presentes + 1, JSON.stringify(impressao))
     await p.capturar('07-impressao-lista-evacuacao.png')
     const pdf = await p.enviar('Page.printToPDF', { printBackground: false, preferCSSPageSize: false })
     writeFileSync(join(SAIDA, 'lista-evacuacao.pdf'), Buffer.from(pdf.data, 'base64'))
-    console.log('        captura: docs/img/lista-evacuacao.pdf')
+    console.log(`        captura: ${join(SAIDA, "lista-evacuacao.pdf")}`)
     await p.enviar('Emulation.setEmulatedMedia', { media: '' })
 
     // 7. Celular 360 px (M12)

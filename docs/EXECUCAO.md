@@ -326,8 +326,43 @@ Resultado: PASSOU
 `docker compose up -d --wait` → api e web *Healthy*; `docker compose --profile test run --rm tests` → `83 passed, 1 skipped`.
 Resultado: PASSOU
 
-### S6 — Vercel
-`frontend/vercel.json` (rewrites para o Render) — **NÃO TESTADO** (sem token da Vercel).
+### S6 — Publicação pelo navegador (MCP Claude in Chrome; logins e senha feitos pelo usuário) — 2026-10-23
+| Passo | O que foi feito | Resultado |
+|---|---|---|
+| Supabase | Projeto `gestao-visitantes` (plano Free), região **East US (North Virginia)**, *Data API* **desligada**, *automatic RLS* **ligado**; senha definida pelo usuário | *Healthy* |
+| Render | *Blueprint* a partir do repositório público (`render.yaml`); `DATABASE_URL` colada pelo usuário (Claude conferiu só o formato, sem ler a senha) | serviço `gestao-visitantes-api` |
+| Vercel | Import do repositório, *Root Directory* `frontend`, preset Vite (`vercel.json`); app Vercel do GitHub autorizado pelo usuário para `Yiuky/gestao-visitantes` | **https://gestao-visitantes.vercel.app** |
+
+### S6 — Falha no primeiro deploy do Render (F6) — 2026-10-23
+Log do Render (11:29):
+```
+sqlalchemy.exc.OperationalError: (psycopg.OperationalError) failed to resolve host '#@aws-0-us-east-1.pooler.supabase.com': [Errno -2] Name or service not known
+ERROR:    Application startup failed. Exiting.
+```
+Causa: a senha gerada pelo Supabase tem caracteres especiais sem codificação; a URL foi cortada no lugar errado.
+Correção: script local `montar_database_url.ps1` (fora do repositório) lê a senha oculta (`Read-Host -AsSecureString`), aplica `[Uri]::EscapeDataString` e copia a URL para a área de transferência; o usuário colou no Render e redeployou.
+Verificação pelo navegador: `GET https://gestao-visitantes.vercel.app/api/health` → `{"status":"ok"}` (Vercel → Render → Supabase).
+Observação: daqui, `curl` direto para `*.onrender.com` dá timeout (rede local); pelo *rewrite* da Vercel responde em ~0,3 s.
+
+### S6 — Seed fictício em produção pela API (`scripts/seed_api.mjs`) — 2026-10-23
+A `DATABASE_URL` tem senha e fica só no Render; o seed foi carregado pelos endpoints públicos. Teste local antes (Docker, banco zerado, duas execuções):
+```
+Seed carregado pela API: 5 tipos, 10 cartões, 5 visitas (dados fictícios).
+Painel: {"data_referencia":"2026-10-23","visitas_do_dia":5,"presentes":1,"encerradas_do_dia":2,"veiculos_no_patio":1,"cartoes_pendentes":1,"acessos_negados_hoje":0}
+Banco já possui dados; seed ignorado.
+```
+Produção (`BASE_URL=https://gestao-visitantes.vercel.app`): mesma saída. Diferença para o `seed.py`: a "Elisa Simulada" fica com data de hoje (a API só dá entrada no dia, RN13).
+
+### S6 — E2E na URL pública — 2026-10-23
+Comando: `$env:BASE_URL="https://gestao-visitantes.vercel.app"; $env:CAPTURAS_DIR="docs/img/online"; node scripts/capturas.mjs`
+O roteiro passou a conferir **variações** (E01, E07, E08) em vez de números fixos, para servir aos dois seeds. Validado antes no Docker local (9/9).
+```
+PASSOU  E01 … E09
+E07 → {"visitas_do_dia":"6","presentes":"2","encerradas_do_dia":"2","veiculos_no_patio":"1","cartoes_pendentes":"1","acessos_negados_hoje":"1"} · Leitor Jurídico
+9 passaram, 0 falharam
+```
+Capturas de produção em `docs/img/online/`. O roteiro deixa na demo a visita fictícia "Helena Exemplo" e duas passagens.
+Resultado: PASSOU
 
 ## Falhas identificadas e corrigidas
 > Exigido na ficha de entrega: pelo menos uma falha real.
@@ -339,6 +374,7 @@ Resultado: PASSOU
 | F3 | S2 | Bordas da tabela desalinhadas na coluna Ações | `td` com `display:flex` deixa de ser célula | botões num `div.acoes` dentro do `td` | inspeção visual B05b |
 | F4 | S3 | Com a API parada, tela mostrava "Erro 500 ao falar com a API" | proxy do Vite responde 500 sem JSON (o `fetch` não falha) | 5xx sem corpo JSON → "API indisponível…" | P05b (MCP) |
 | F5 | S5 | Em 360 px, selos e sublinhas caíam na coluna do rótulo | `td` em grid: cada filho virava item próprio do grid | rótulo `position:absolute` + `padding-left` na célula | E09 (`invadeRotulo` 3 → 0) |
+| F6 | S6 | API no Render não subia: `failed to resolve host '#@aws-0-…pooler.supabase.com'` | senha do banco com caracteres especiais sem codificação na `DATABASE_URL` | URL montada com `[Uri]::EscapeDataString` por script local (senha não sai da máquina do usuário) | `/api/health` 200 pela Vercel; E2E online 9/9 |
 
 ## Resumo final dos testes
 | Suíte | Passou | Falhou | Corrigido | Não testado |

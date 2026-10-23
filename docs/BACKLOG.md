@@ -16,7 +16,7 @@
 | S4 | ✅ | Extensão: catraca simulada, passagens, trajeto, último local (RN21–RN26) | Testes de catraca verdes; CA3 (rastreamento) |
 | S4b | ✅ | Docker: imagens api/web, compose, testes no contêiner (ADR-015) | `docker compose` build/test/up ok; persistência por volume |
 | S5 | ✅ | Homologação, README, capturas, reflexão, GitHub (público, ADR-018) |
-| S6 | 🔄 | Deploy online: Supabase (banco) + Render (API) + Vercel (web) — ADR-020 | Suíte verde em PostgreSQL; health e E2E na URL pública | Suíte verde; README completo; push autorizado |
+| S6 | ✅ | Deploy online: Supabase (banco) + Render (API) + Vercel (web) — ADR-020 | Suíte verde em PostgreSQL; health e E2E na URL pública | Suíte verde; README completo; push autorizado |
 
 **Regra de tempo:** se a S3 terminar com pouco tempo de encontro, pule para a S5 e marque a S4 como ⬜ pendente no README.
 
@@ -66,9 +66,10 @@
 - [x] Suíte completa em PostgreSQL 16 (`TEST_DATABASE_URL`)
 - [x] `render.yaml`, `$PORT` no Dockerfile, `frontend/vercel.json`
 - [x] Simulação local do Render (imagem + PostgreSQL + seed)
-- [ ] Criar projeto no Supabase e obter `DATABASE_URL` (usuário)
-- [ ] Criar o serviço no Render e o projeto na Vercel (precisa de credenciais)
-- [ ] Seed no Supabase; E2E (`scripts/capturas.mjs`) na URL pública
+- [x] Projeto no Supabase (East US, Data API desligada, RLS automático)
+- [x] Serviço no Render (Blueprint) e projeto na Vercel — https://gestao-visitantes.vercel.app
+- [x] Seed fictício pela API (`scripts/seed_api.mjs`); E2E na URL pública 9/9
+- [ ] (opcional) Conectar o repositório ao Render pelo app do GitHub para deploy automático da API a cada push
 
 ## Épicos de evolução (fora do encontro)
 

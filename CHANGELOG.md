@@ -4,6 +4,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). 
 
 ## [Não publicado]
 
+### S6 — Publicação online — 2026-10-23
+- Publicado: **https://gestao-visitantes.vercel.app** (Vercel) → API no Render → PostgreSQL no Supabase.
+- Adicionado: `scripts/seed_api.mjs` (seed fictício pelos endpoints públicos) e `docs/img/online/` (capturas de produção).
+- Alterado: `scripts/capturas.mjs` confere variações dos indicadores e aceita `CAPTURAS_DIR`.
+- Alterado: README reescrito no padrão dos projetos do autor (cabeçalho centralizado, badges, seções com emoji, tabela de acesso online, English Abstract) e logo em `docs/img/logo.svg`.
+- Corrigido (F6): `DATABASE_URL` com senha de caracteres especiais sem codificação derrubava a API no Render.
+
 ### S6 — Preparação do deploy (Supabase + Render + Vercel) — 2026-10-23
 - Adicionado: suporte a PostgreSQL (`psycopg[binary]` 3.3.2, `normalizar_url`, pool com `pre_ping`/`recycle`).
 - Adicionado: RLS ligado em todas as tabelas no PostgreSQL (`criar_tabelas`), bloqueando a API REST automática do Supabase.
